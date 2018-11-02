@@ -92,25 +92,25 @@ public class HomeController {
 			logger.info("동전 Pi="+Pi[i]+", Ni="+Ni[i]);
 		}
 		
-		int l1, l2, l3, last;
-		last = 0;
-		D[0] = 1;
-		for(l1=0;l1<K;l1++)
-		{
-			for(l2=last;l2>=0;l2--)
-			{
-				for(l3=1;l3<=Ni[l1];l3++)	
-				{
-					if(l2 + l3 * Pi[l1] > T) break;
-					D[l2 + l3*Pi[l1]] += D[l2];
-					int tt = l2 + (l3*Pi[l1]);
-					logger.info("D["+tt+"] ="+D[l2 + l3*Pi[l1]]);
-				}
-			}
-			last += Pi[l1]*Ni[l1];
-			if(last > T) last = T;
-		}
-		logger.info("동전 D[T]="+D[T]);
+//		int l1, l2, l3, last;
+//		last = 0;
+//		D[0] = 1;
+//		for(l1=0;l1<K;l1++)
+//		{
+//			for(l2=last;l2>=0;l2--)
+//			{
+//				for(l3=1;l3<=Ni[l1];l3++)	
+//				{
+//					if(l2 + l3 * Pi[l1] > T) break;
+//					D[l2 + l3*Pi[l1]] += D[l2];
+//					int tt = l2 + (l3*Pi[l1]);
+//					logger.info("D["+tt+"] ="+D[l2 + l3*Pi[l1]]);
+//				}
+//			}
+//			last += Pi[l1]*Ni[l1];
+//			if(last > T) last = T;
+//		}
+//		logger.info("동전 D[T]="+D[T]);
 		
 		
 //		List<Integer> list = new ArrayList<>();
@@ -145,40 +145,40 @@ public class HomeController {
 		
 		
 		//
-//		int cnt = 1;
-//		int temp = T;
-//		String txt = "";
-//		String txt2 = "";
-//		for(int i=1; i<=K; i++) {
-//            int pi = Pi[i-1]; // 동전금액
-//            int ni = Ni[i-1]; // 동전개수
-//            
-//            for(int j=ni; j>0; j--) {
-//                if(temp == (pi * j)) {
-//                	txt = txt2 + pi +" x "+j;
-//                    System.out.println(txt);
-//                    resultList.add(txt);
-//                }
-//                else {
-//                    if(temp > pi * j) {
-//                        txt2 = txt2 + pi +" x "+j+" + ";
-//                        temp = temp - (pi * j);
-//                        break;
-//                    }
-//                }
-//            }
-//            if(i == K) {
-//                //System.out.println("i="+i+", cnt="+cnt);
-//                cnt = cnt + 1;
-//                if(cnt == K+1)
-//                    break;
-//                else {
-//                    i = cnt-1;
-//                    txt2 = "";
-//                    temp = T;
-//                }
-//            }
-//        }
+		int cnt = 1;
+		int temp = T;
+		String txt = "";
+		String txt2 = "";
+		for(int i=1; i<=K; i++) {
+            int pi = Pi[i-1]; // 동전금액
+            int ni = Ni[i-1]; // 동전개수
+            
+            for(int j=ni; j>0; j--) {
+                if(temp == (pi * j)) {
+                	txt = txt2 + pi +" x "+j;
+                    System.out.println(txt);
+                    resultList.add(txt);
+                }
+                else {
+                    if(temp > pi * j) {
+                        txt2 = txt2 + pi +" x "+j+" + ";
+                        temp = temp - (pi * j);
+                        break;
+                    }
+                }
+            }
+            if(i == K) {
+                //System.out.println("i="+i+", cnt="+cnt);
+                cnt = cnt + 1;
+                if(cnt == K+1)
+                    break;
+                else {
+                    i = cnt-1;
+                    txt2 = "";
+                    temp = T;
+                }
+            }
+        }
 		//https://www.digitalculture.or.kr/koi/showOlymPiadDissentDetail.do
 		String resultTxt = "";
 		resultTxt = "총 " + resultList.size() + "가지" + "\n";
@@ -190,7 +190,7 @@ public class HomeController {
 		model.addAttribute("price", Pi);
 		model.addAttribute("priceCnt", Ni);
 		model.addAttribute("coinRow", K);
-		model.addAttribute("resultTxt", D[T] );
+		model.addAttribute("resultTxt", resultTxt );
 		
 		return "homework2";
 	}
