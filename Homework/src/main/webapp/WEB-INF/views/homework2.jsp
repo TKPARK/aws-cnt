@@ -1,28 +1,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html>
 <head>
 	<title>Homework 2 알고리즘</title>
 <script type="text/javascript">
 
-	var coinCnt = 1;
-
 	function addCoin(){
-		if(coinCnt < 0)
-			coinCnt = 0;
+		var coinCnt = document.getElementById("coinRow").value;
+		if(coinCnt == -1)
+			coinCnt = 1;
+		
 		var totalCoin = document.getElementById("totalCoin");
 		var frmTag = "<div id='coinRow"+coinCnt+"'>";
 		frmTag += "<input name='price["+coinCnt+"]' type='text' value='' />";
 		frmTag += " <input name='priceCnt["+coinCnt+"]' type='text' value='' /></div>";
 		totalCoin.innerHTML += frmTag;
-		coinCnt++;
+		
+		coinCnt = parseInt(coinCnt) + 1;
+		document.getElementById("coinRow").value = coinCnt;
 	}
 	function delCoin(){
-		coinCnt--;
+		var coinCnt = document.getElementById("coinRow").value;
+		coinCnt = parseInt(coinCnt) - 1;
+		
 		var totalCoin = document.getElementById("totalCoin");
 		var row = document.getElementById("coinRow"+coinCnt);
 		totalCoin.removeChild(row);
+		
+		document.getElementById("coinRow").value = coinCnt;
 	}
 
 </script>
@@ -47,11 +54,25 @@
 		<p>동전금액 개수</p>
 	</div>
 	<div id="totalCoin">
-		<div id="coinRow0">
-			<input name="price[0]" type="text" value="" />
-			<input name="priceCnt[0]" type="text" value="" />
-		</div>
+		
+		<c:choose> 
+			<c:when test="${coinRow > 0 }">
+				<c:forEach var="i" begin="0" end="${coinRow-1 }" step="1">
+					<div id="coinRow${i }">
+						<input name="price[${i }]" type="text" value="${price[i] }" />
+						<input name="priceCnt[${i }]" type="text" value="${priceCnt[i] }" />
+					</div>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>
+				<div id="coinRow0">
+					<input name="price[0]" type="text" value="" />
+					<input name="priceCnt[0]" type="text" value="" />
+				</div>
+			</c:otherwise>
+		</c:choose>
 	</div>
+	<input type="hidden" id="coinRow" value="${coinRow }">
 	<input type="submit" value="계산">
 </form>
 
