@@ -13,9 +13,10 @@
 			coinCnt = 1;
 		
 		var totalCoin = document.getElementById("totalCoin");
-		var frmTag = "<div id='coinRow"+coinCnt+"'>";
-		frmTag += "<input name='price["+coinCnt+"]' type='text' value='' />";
-		frmTag += " <input name='priceCnt["+coinCnt+"]' type='text' value='' /></div>";
+		var frmTag = "<tr id='coinRow"+coinCnt+"'>";
+		frmTag += "<td></td>";
+		frmTag += "<td><input name='price["+coinCnt+"]' oninput='inputNumberFormat(this)' type='text' value='' /></td>";
+		frmTag += " <td><input name='priceCnt["+coinCnt+"]' oninput='inputNumberFormat(this)' type='text' value='' /></td></tr>";
 		totalCoin.innerHTML += frmTag;
 		
 		coinCnt = parseInt(coinCnt) + 1;
@@ -31,6 +32,20 @@
 		
 		document.getElementById("coinRow").value = coinCnt;
 	}
+	
+	function inputNumberFormat(obj) { 
+	    obj.value = comma(uncomma(obj.value)); 
+	} 
+
+	function comma(str) { 
+	    str = String(str); 
+	    return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'); 
+	} 
+
+	function uncomma(str) { 
+	    str = String(str); 
+	    return str.replace(/[^\d]+/g, ''); 
+	}
 
 </script>
 </head>
@@ -41,43 +56,52 @@
 
 <h3>입력형식</h3>
 <form action="coinExchange.do" method="post">
-	<div>
-		<div>지폐급액</div>
-		<input name="amt" type="text" value="${amt}" />
-	</div>
-	<div>
-		<p>동전가지수</p>
-		<input name="addButton" type="button" style="cursor:hand" onClick="addCoin();" value="+">
-		<input name="delButton" type="button" style="cursor:hand" onClick="delCoin();" value="-">
-	</div>
-	<div>
-		<p>동전금액 개수</p>
-	</div>
-	<div id="totalCoin">
-		
-		<c:choose> 
-			<c:when test="${coinRow > 0 }">
-				<c:forEach var="i" begin="0" end="${coinRow-1 }" step="1">
-					<div id="coinRow${i }">
-						<input name="price[${i }]" type="text" value="${price[i] }" />
-						<input name="priceCnt[${i }]" type="text" value="${priceCnt[i] }" />
-					</div>
-				</c:forEach>
-			</c:when>
-			<c:otherwise>
-				<div id="coinRow0">
-					<input name="price[0]" type="text" value="" />
-					<input name="priceCnt[0]" type="text" value="" />
-				</div>
-			</c:otherwise>
-		</c:choose>
-	</div>
+	<table>
+		<tbody id="totalCoin">
+			<tr>
+				<td>지폐급액</td>
+				<td><input name="amt" oninput="inputNumberFormat(this)" type="text" value="${amt}" /></td>
+			</tr>
+			<tr>
+				<td>동전의 가지 수</td>
+				<td>
+					<input name="addButton" type="button" style="cursor:hand" onClick="addCoin();" value="+">
+					<input name="delButton" type="button" style="cursor:hand" onClick="delCoin();" value="-">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>동전금액</td>
+				<td>개수</td>
+			</tr>
+			
+			<c:choose> 
+				<c:when test="${coinRow > 0 }">
+					<c:forEach var="i" begin="0" end="${coinRow-1 }" step="1">
+						<tr id="coinRow${i }">
+							<td></td>
+							<td><input name="price[${i }]" oninput="inputNumberFormat(this)" type="text" value="${price[i] }" /></td>
+							<td><input name="priceCnt[${i }]" oninput="inputNumberFormat(this)" type="text" value="${priceCnt[i] }" /></td>
+						</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<tr id="coinRow0">
+						<td></td>
+						<td><input name="price[0]" oninput="inputNumberFormat(this)" type="text" value="" /></td>
+						<td><input name="priceCnt[0]" oninput="inputNumberFormat(this)" type="text" value="" /></td>
+					</tr>
+				</c:otherwise>
+			</c:choose>
+		</tbody>
+	</table>
+	 
 	<input type="hidden" id="coinRow" value="${coinRow }">
 	<input type="submit" value="계산">
 </form>
 
 <h3>출력형식</h3>
-<textarea rows="4" cols="50">
+<textarea rows="10" cols="50">
 ${resultTxt}
 </textarea>
 

@@ -3,7 +3,6 @@ package com.cnt.homework;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -65,26 +64,25 @@ public class HomeController {
 	public String coinExchange(Coin coin, Model model) throws Exception {
 		logger.info("in coinExchange...");
 		
+		int maxNi = 0; // 가장 큰 동전개수
 		int T; // 지폐의 금액
 		int K; // 동전의 가지수
 		int [] Pi; // 동전금액
 		int [] Ni; // 동전개수
-		int [] D; // 각 동전 사용개수
 		ArrayList<String> resultList = new ArrayList<String>();
 		
 		String amt = coin.getAmt(); // 지폐의 금액
 		String[] price = coin.getPrice(); // 동전금액
 		String[] priceCnt = coin.getPriceCnt(); // 동전개수
 		
-		T = Integer.parseInt(amt);
+		T = Integer.parseInt(amt == "" ? "0" : amt.replaceAll(",", ""));
 		K = price.length;
 		
 		Pi = new int[K]; // 동전금액
 		Ni = new int[K]; // 동전개수
-		D = new int[10001];
 		for(int i=0; i<K; i++) {
-			Pi[i] = Integer.parseInt(price[i]);
-			Ni[i] = Integer.parseInt(priceCnt[i]);
+			Pi[i] = Integer.parseInt(price[i] == "" ? "0" : price[i].replaceAll(",", ""));
+			Ni[i] = Integer.parseInt(priceCnt[i] == "" ? "0" : priceCnt[i].replaceAll(",", ""));
 		}
 		logger.info("지폐의 금액 T="+T);
 		logger.info("동전의 가지수 K="+K);
@@ -113,35 +111,131 @@ public class HomeController {
 //		logger.info("동전 D[T]="+D[T]);
 		
 		
-//		List<Integer> list = new ArrayList<>();
-//		
-//		int temp = T;
-//		String txt = " " + T + " = ";
-//		for(int i=0; i<K; i++) {
-//			int pi = Pi[i]; // 동전금액
-//			int ni = Ni[i]; // 동전개수
-//			System.out.println("pi = " + pi+ ", Ni = " + ni);
-//			
-//			for(int j=1; j<=ni; j++) {
-//				//System.out.println("temp = " + temp+ ", pi * j = " + pi * j);
-//				list.add(pi * j);
-//				
-//				if(temp < (pi * j)) {
+		
+		// 1.각각 입력받은 동전개수중 가장 큰 값을 찾는다
+		for(int i=0; i<K; i++) {
+			if(Ni[i] > maxNi) maxNi = Ni[i];
+		}
+		logger.info("maxNi = "+maxNi);
+		
+		int [][] amtPi = new int[K][maxNi+1]; // 각 동전 사용개수
+
+		// 2.각 동전별 '동전금액 * 개수' 값을 구한다
+		for(int i=0; i<=maxNi; i++) {
+			for(int j=0; j<K; j++) {
+				if(i > Ni[j]) continue;
+				amtPi[j][i] = Pi[j] * i;
+			}
+		}
+		
+//		int cnt = 0;
+//		int h = 0;
+		
+		// init
+		int [] coinCnt = new int[K];
+		for(int i=0; i<K; i++) {
+			coinCnt[i] = 0;
+		}
+		
+//		while(true) {
+//			for(int i=0; i<=maxNi; i++) {
+//				for(int j=0; j<K; j++) {
+//					cnt += 1;
 //					
-//				} else if(temp == (pi * j)) {
-//					System.out.println(txt + pi + " x " + j);
-//				} else if(temp > (pi * j)) {
-//					txt += pi + " x " + j + " + ";
-//					temp = temp - (pi * j);
-//					Ci[i-1] = temp;
-//					break;
+//					if(cnt % K == 0) {
+//						coinCnt[j] = (cnt / K - 1) - (h * (maxNi+1));
+//						
+//						if(cnt % (K * (maxNi+1)) == 0) {
+//							coinCnt[j-1] += 1;
+//						}
+//					}
+//					
+//					logger.info("cnt = " +cnt+ ", amtPi["+j+"]["+coinCnt[j]+"] = "+amtPi[j][coinCnt[j]]);
 //				}
 //			}
+//			h += 1;
+//			logger.info("");
+//			
+//			if(cnt == 100) break;
 //		}
-//		System.out.println("list.size() = " + list.size());
-//		for(int i=0; i<list.size(); i++) {
-//			System.out.println("list("+i+") = " + list.get(i));
+		
+//		for(int g=K-1; g>=0; g--) {
+//			for(int h=0; h<K; h++) {
+//				for(int i=0; i<=Ni[g]; i++) {
+//					for(int j=0; j<K; j++) {
+//						logger.info("amtPi["+j+"]["+coinCnt[j]+"] = "+amtPi[j][coinCnt[j]]);
+//					}
+//					coinCnt[g] += 1;
+//				}
+//				coinCnt[g] = 0;
+//			}
+//			
 //		}
+		
+		
+		
+//		for(int g=K; g>=0; g--) {
+//			for(int h=0; h<=Ni[g-2]; h++) {
+//				for(int i=0; i<=Ni[g-1]; i++) {
+//					for(int j=0; j<K; j++) {
+//						cnt += 1;
+//						//logger.info("cnt = " + cnt + ", h = " + h);
+//						if(cnt % K == 0) {
+//							coinCnt[j] = (cnt / K - 1) - (h * (Ni[g-1]+1));
+//							
+//							if(cnt % (K * (Ni[g-1]+1)) == 0) {
+//								coinCnt[j-1] += 1;
+//							}
+//						}
+//						logger.info("amtPi["+j+"]["+coinCnt[j]+"] = "+amtPi[j][coinCnt[j]]);
+//					}
+//				}
+//				logger.info("");
+//			}
+//			cnt = 0;
+//		}
+		
+		
+//		int cc = 0;
+//		for(int h=0; h<=K; h++) {
+//			for(int i=0; i<=maxNi; i++) {
+//				for(int j=0; j<K; j++) {
+//					int xx = 0;
+//					cc += 1;
+//					if(cc % K == 0)
+//						xx = cc/K-1 > 0 ? cc/K-1 : 0;
+//					else
+//						xx = 0;
+//					logger.info("amtPi["+j+"]["+xx+"] = "+amtPi[j][xx]);
+//				}
+//				if(cc >= (maxNi+1)*K) cc = 0;
+//			}
+//			logger.info("");
+//		}
+		
+//		for(int j=0; j<K; j++) {
+//			for(int i=Ni[j]; i>0; i--) {
+//				//if(i > Ni[j]) continue;
+//				//logger.info("amtPi["+j+"]["+i+"] = "+amtPi[j][i]);
+//				if(T == amtPi[j][i]) {
+//					logger.info(amtPi[j][i]+ " = " +Pi[j]+" x "+i);
+//					continue;
+//				}
+//				
+//				for(int x=0; x<K; x++) {
+//					if(j >= x) continue;
+//					for(int y=Ni[x]; y>=0; y--) {
+//						if(T == amtPi[j][i] + amtPi[x][y]) {
+//							logger.info(amtPi[j][i] + amtPi[x][y]+ " = " +Pi[j]+" x "+i+" + "+Pi[x]+" x "+y);
+//							continue;
+//						}
+//					}
+//				}
+//			}
+//			//logger.info("");
+//		}
+		
+		
 		
 		
 		//
@@ -152,8 +246,10 @@ public class HomeController {
 		for(int i=1; i<=K; i++) {
             int pi = Pi[i-1]; // 동전금액
             int ni = Ni[i-1]; // 동전개수
+            //System.out.println("i="+i+", pi="+pi+", ni="+ni+", temp="+temp);
             
             for(int j=ni; j>0; j--) {
+            	//System.out.println("j="+j);
                 if(temp == (pi * j)) {
                 	txt = txt2 + pi +" x "+j;
                     System.out.println(txt);
@@ -178,8 +274,9 @@ public class HomeController {
                     temp = T;
                 }
             }
+//            System.out.println("");
         }
-		//https://www.digitalculture.or.kr/koi/showOlymPiadDissentDetail.do
+		
 		String resultTxt = "";
 		resultTxt = "총 " + resultList.size() + "가지" + "\n";
 		for(String result : resultList) {
