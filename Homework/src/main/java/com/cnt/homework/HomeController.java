@@ -64,6 +64,84 @@ public class HomeController {
 	public String coinExchange(Coin coin, Model model) throws Exception {
 		logger.info("in coinExchange...");
 		
+		int T; // 지폐의 금액
+		int K; // 동전의 가지수
+		int [] Pi; // 동전금액
+		int [] Ni; // 동전개수
+		ArrayList<String> resultList = new ArrayList<String>();
+		
+		String amt = coin.getAmt(); // 지폐의 금액
+		String[] price = coin.getPrice(); // 동전금액
+		String[] priceCnt = coin.getPriceCnt(); // 동전개수
+		
+		T = Integer.parseInt(amt == "" ? "0" : amt.replaceAll(",", ""));
+		K = price.length;
+		
+		Pi = new int[K]; // 동전금액
+		Ni = new int[K]; // 동전개수
+		for(int i=0; i<K; i++) {
+			Pi[i] = Integer.parseInt(price[i] == "" ? "0" : price[i].replaceAll(",", ""));
+			Ni[i] = Integer.parseInt(priceCnt[i] == "" ? "0" : priceCnt[i].replaceAll(",", ""));
+		}
+		logger.info("지폐의 금액 T="+T);
+		logger.info("동전의 가지수 K="+K);
+		for(int i=0; i<K; i++) {
+			logger.info("동전 Pi="+Pi[i]+", Ni="+Ni[i]);
+		}
+		
+		int cnt = 1;
+		int temp = T;
+		String txt = "";
+		String txt2 = "";
+		for(int i=1; i<=K; i++) {
+            int pi = Pi[i-1]; // 동전금액
+            int ni = Ni[i-1]; // 동전개수
+            
+            for(int j=ni; j>0; j--) {
+                if(temp == (pi * j)) {
+                	txt = txt2 + pi +" x "+j;
+                    System.out.println(txt);
+                    resultList.add(txt);
+                }
+                else {
+                    if(temp > pi * j) {
+                        txt2 = txt2 + pi +" x "+j+" + ";
+                        temp = temp - (pi * j);
+                        break;
+                    }
+                }
+            }
+            if(i == K) {
+                cnt = cnt + 1;
+                if(cnt == K+1)
+                    break;
+                else {
+                    i = cnt-1;
+                    txt2 = "";
+                    temp = T;
+                }
+            }
+        }
+		
+		String resultTxt = "";
+		resultTxt = "총 " + resultList.size() + "가지" + "\n";
+		for(String result : resultList) {
+			resultTxt += T + " = " + result + "\n";
+		}
+		
+		model.addAttribute("amt", amt);
+		model.addAttribute("price", Pi);
+		model.addAttribute("priceCnt", Ni);
+		model.addAttribute("coinRow", K);
+		model.addAttribute("resultTxt", resultTxt );
+		
+		return "homework2";
+	}
+	
+	@RequestMapping(value="/coinExchange2.do", method=RequestMethod.POST)
+	public String coinExchange2(Coin coin, Model model) throws Exception {
+		logger.info("in coinExchange...");
+		
 		int maxNi = 0; // 가장 큰 동전개수
 		int T; // 지폐의 금액
 		int K; // 동전의 가지수
