@@ -24,8 +24,8 @@ public class HomeController {
 	public int [] Ni; // 동전개수
 	public int [] Ci; // 사용개수
 	
-	public int selcount = 0;
-	public int [] sel = new int[10000];
+	public int selcount;
+	public int [] sel;
 	public ArrayList<String> resultList;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -58,6 +58,9 @@ public class HomeController {
 	@RequestMapping(value="/coinExchange.do", method=RequestMethod.POST)
 	public String coinExchange(Coin coin, Model model) throws Exception {
 		logger.info("in coinExchange...");
+		
+		selcount = 0;
+		sel = new int[10000];
 		
 		// 화면에서 넘겨받은 데이터 변수에 담기
 		String amt = coin.getAmt(); // 지폐의 금액
@@ -121,7 +124,10 @@ public class HomeController {
         				Ci[j] += 1;
         			}
     	    	}
+    			System.out.print(sel[i] + " ");
 	        }
+    		System.out.println("");
+    		
     		String txt = "";
     		boolean isSkip = false;
     		for( int j=0; j<K; j++ ) {
@@ -135,7 +141,7 @@ public class HomeController {
     		}
     		
     		if(!isSkip) {
-    			System.out.println(txt);
+    			//System.out.println(txt);
     			resultList.add(txt);
     		}
     		
@@ -149,6 +155,7 @@ public class HomeController {
 	        sel[selcount] = Pi[i];
 	        sum = sum + Pi[i];
 	        selcount++;
+	        //System.out.println("i = " + i + ", selcount = " + selcount + ", sum = " + sum + ", depth = " + depth);
 	        calcCoin(depth+1, i, sum);
 	        selcount--;
 	        sum = sum - Pi[i];
