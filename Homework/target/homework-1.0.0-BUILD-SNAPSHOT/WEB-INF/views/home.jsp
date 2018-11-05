@@ -10,7 +10,7 @@
 	Hello world!  
 </h1>
 
-<a href="homework2"><p>Homework 2 알고리즘</p></a>
+<p><a href="homework2">Homework 2 알고리즘</a></p>
 
 </body>
 </html>
